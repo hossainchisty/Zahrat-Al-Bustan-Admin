@@ -1,5 +1,7 @@
 # Zahrat-Al-Bustan Administration
 
+Admin Panel for managing reservations, promo code, campaign, feedback, statistics, etc.
+
 ![Demo]()
 
 #### Features:
@@ -7,7 +9,8 @@
 - User Registration and Authentication
 - Email Verification
 - Password reset functionality
-- Book Browsing and Searching
-- Book Details and Purchase
-- User Profile Management
-- Store Analytics, Book Addition, Modification, and Deletion (Admin)
+- Reservations Browsing and Searching
+- Promo code Management
+- Marketing Campaign Management
+- Feedback Management
+- Coming Soon...
