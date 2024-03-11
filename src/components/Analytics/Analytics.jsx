@@ -5,30 +5,28 @@ import { useCallback } from 'react';
 
 const Analytics = () => {
   const apiBaseDomain = import.meta.env.VITE_API_BASE_URL;
-  const getToken = localStorage.getItem('userInfo');
-  const token = getToken.replace(/["']/g, '');
+  // const getToken = localStorage.getItem('userInfo');
+  // const token = getToken.replace(/["']/g, '');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statistics, setStatistics] = useState({
-    totalBooks: 0,
-    totalOrders: 0,
-    totalUsers: 0,
-    featuredBooks: 0,
+    totalReservation: 0,
+    totalMenu: 0,
+    totalChef: 0,
   });
 
-  const [prevTotalOrders, setPrevTotalOrders] = useState(
-    statistics.totalOrders
-  );
-  const [prevTotalBooks, setPrevTotalBooks] = useState(statistics.totalBooks);
-  const [prevFeaturedBooks, setPrevFeaturedBooks] = useState(
-    statistics.featuredBooks
+  const [prevTotalReservation, setPrevTotalReservation] = useState(
+    statistics.totalReservation
   );
 
+  const [prevTotalChef, setPrevTotalChef] = useState(statistics.totalChef);
+  const [prevtotalMenu, setPrevtotalMenu] = useState(statistics.totalMenu);
+
   const fetchAnalytics = useCallback(() => {
-    fetch(`${apiBaseDomain}/admin`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    fetch(`${apiBaseDomain}/analytics`, {
+      // headers: {
+      //   Authorization: `Bearer ${token}`,
+      // },
     })
       .then((response) => {
         if (!response.ok) {
@@ -37,11 +35,19 @@ const Analytics = () => {
         return response.json();
       })
       .then((data) => {
+        setPrevTotalChef({
+          totalChef: data.data.total_chef,
+        });
+        setPrevTotalReservation({
+          totalReservation: data.data.total_reservation,
+        });
+        setPrevtotalMenu({
+          totalMenu: data.data.total_menu,
+        });
         setStatistics({
-          totalOrders: data.data.total_orders,
-          totalBooks: data.data.total_books,
-          totalUsers: data.data.total_users,
-          featuredBooks: data.data.featured_books,
+          totalChef: data.data.total_chef,
+          totalMenu: data.data.total_menu,
+          totalReservation: data.data.total_reservation,
         });
         setIsLoading(false);
       })
@@ -49,7 +55,7 @@ const Analytics = () => {
         setError(error);
         setIsLoading(false);
       });
-  }, [apiBaseDomain, token]);
+  }, [apiBaseDomain]);
 
   useEffect(() => {
     fetchAnalytics();
@@ -58,16 +64,16 @@ const Analytics = () => {
   const analyticsCards = useMemo(() => {
     return (
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {/* Analytics Card 3: Total Customer */}
+        {/* Analytics Card 3: Total Menu */}
         <div className='bg-white shadow-lg rounded-lg p-6'>
           <h3 className='text-lg font-semibold text-gray-800 mb-2'>
-            Total Customer
+            Total Menu
           </h3>
           <div className='flex items-center'>
             <p className='text-3xl font-bold text-purple-500 mr-2'>
-              {statistics.totalOrders}
+              {statistics.totalMenu}
             </p>
-            {statistics.totalOrders > prevTotalOrders ? (
+            {statistics.totalMenu > prevtotalMenu ? (
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 className='h-5 w-5 text-green-500'
@@ -103,9 +109,9 @@ const Analytics = () => {
           </h3>
           <div className='flex items-center'>
             <p className='text-3xl font-bold text-blue-500 mr-2'>
-              {statistics.totalBooks}
+              {statistics.totalReservation}
             </p>
-            {statistics.totalBooks > prevTotalBooks ? (
+            {statistics.totalReservation > prevTotalReservation ? (
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 className='h-5 w-5 text-green-500'
@@ -134,16 +140,16 @@ const Analytics = () => {
             )}
           </div>
         </div>
-        {/* Analytics Card 3:  Total Menu */}
+        {/* Analytics Card 3:  Total Chef */}
         <div className='bg-white shadow-lg rounded-lg p-6'>
           <h3 className='text-lg font-semibold text-gray-800 mb-2'>
-            Total Menu
+            Total Chef
           </h3>
           <div className='flex items-center'>
             <p className='text-3xl font-bold text-yellow-500 mr-2'>
-              {statistics.featuredBooks}
+              {statistics.totalChef}
             </p>
-            {statistics.featuredBooks > prevFeaturedBooks ? (
+            {statistics.totalChef > prevTotalChef ? (
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 className='h-5 w-5 text-green-500'
@@ -174,7 +180,14 @@ const Analytics = () => {
         </div>
       </div>
     );
-  }, [statistics]);
+  }, [
+    prevTotalChef,
+    prevTotalReservation,
+    prevtotalMenu,
+    statistics.totalChef,
+    statistics.totalMenu,
+    statistics.totalReservation,
+  ]);
 
   if (isLoading) {
     return <LoadingIndicator />;
